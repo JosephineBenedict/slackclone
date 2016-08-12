@@ -2,11 +2,224 @@ var express = require('express');
 //var sql = require('./loadDB');
 var app = express();
 
+
+exports.foo=foo;
+function foo(){
+	
+	
+}
+
+
+
+exports.getConnection=getConnection;
+function getConnection(filename){
+	console.log("  Entering getConnection");
+		//var express = require('express');
+		var sqlite3 = require('sqlite3').verbose();
+		var fs = require('fs');
+		//var filename = 'slack.db';
+		var dbexists = false;
+		try {
+			console.log("  before accessSync");
+			fs.accessSync(filename);
+			console.log("  accessSync true");
+			dbexists = true;
+		
+		} catch (ex) {
+			dbexists = false;
+			console.log("  accessSync false");
+		}
+		var db = new sqlite3.Database(filename);	
+		
+		console.log("  connection: " + db);
+		
+		return db;	
+	
+}
+
+
+
+exports.getTeam=getTeam;
+function getTeam(db, teamId) {
+		console.log("Entering getTeam");
+		
+		return new Promise((resolve, reject) => {
+
+        var query = "SELECT NAME FROM TEAM "
+             + "  WHERE ID = '" + teamId + "'";
+
+        var teams = [];
+
+        db.serialize(function() {
+			console.log("Entering db.serialize");
+            db.each(
+                query,
+                function(err, row) {
+					console.log("  Entering func1");
+                    if (err) {
+                        reject(err);
+                    } else {  
+						console.log("  push func1");					
+                        teams.push(row.NAME);
+                    }
+                },
+                 function (err, nRows) {
+					console.log("  Entering func2");
+                    if (err) {
+                        reject(err);
+                    } else {
+                        //resolve(JSON.stringify(teams));
+						console.log("  resolve func2 rows:" + nRows);
+						console.log("  resolve func2:" + teams);
+						resolve(teams);
+                    }
+                }
+            );
+			});
+			
+			
+			console.log('Traversing return set3');
+			for (var team in actual) {
+				console.log('Processing a team!');
+				team.keys(o).forEach(function(key) {
+					var val = o[key];
+					console.log("  Key: " + o[key]);
+					console.log("  Val: " + val);
+				});
+				//console.log( myArr[index] );
+			}	
+			
+			
+			
+			
+			
+			
+			
+			
+		});	
+	
+}
+
+
+exports.getAllTeams=getAllTeams;
+function getAllTeams(db) {
+		console.log("Entering getAllTeams");
+		
+		return new Promise((resolve, reject) => {
+
+        var query = "SELECT ID, NAME FROM TEAM ";
+           
+        var teams = [];
+
+        db.serialize(function() {
+			console.log("Entering db.serialize");
+            db.each(
+                query,
+                function(err, row) {
+					console.log("  Entering func1");
+                    if (err) {
+                        reject(err);
+                    } else {  
+						console.log("  push func1");
+						var team = {};
+						team.id  = row.ID;
+						team.name = row.NAME;
+                        teams.push(team);
+                    }
+                },
+                 function (err, nRows) {
+					console.log("  Entering func2");
+                    if (err) {
+                        reject(err);
+                    } else {
+                        //resolve(JSON.stringify(teams));
+						console.log("  resolve func2 rows:" + nRows);
+						console.log("  resolve func2:" + teams);
+						resolve(teams);
+                    }
+                }
+            );
+			});
+		});	
+	
+}
+
+
+exports.insertTeam=insertTeam;
+function insertTeam(db, team) {
+		console.log("Insert Team");
+		
+		return new Promise((resolve, reject) => {
+			
+		var a = team.ID;
+		var b = team.NAME;
+		
+		console.log("a: " + a);
+		console.log("b: " + b);
+		
+		var stmt = db.prepare('INSERT INTO TEAM (ID, NAME) values (?, ?)');
+		console.log("prepared statement");
+		stmt.run(a, b);
+		console.log("statement ran");
+		stmt.finalize();
+		console.log("statement finalized");
+		
+		/*
+		var insertTeamSql = "INSERT INTO TEAM (ID, NAME) " +
+            "VALUES (a,        team.NAME)";
+                  
+		conn.run(insertTeamSql);
+		*/
+		
+		console.log("Insert complete");		
+
+		var query = "SELECT NAME FROM TEAM "
+             //+ "  WHERE ID = '" + team.ID + "'";	
+			 + "  WHERE ID = '" + a + "'";					 
+           
+        var teams = [];
+
+        db.serialize(function() {
+			console.log("Entering db.serialize");
+            db.each(
+                query,
+                function(err, row) {
+					console.log("  Entering func1");
+                    if (err) {
+                        reject(err);
+                    } else {  
+						console.log("  push func1");
+						var returnTeam = {};
+						//team.ID  = team.ID;
+						returnTeam.ID  = a;
+						returnTeam.NAME = row.NAME;
+                        teams.push(returnTeam);
+                    }
+                },
+                 function (err, nRows) {
+					console.log("  Entering func2");
+                    if (err) {
+                        reject(err);
+                    } else {
+                        //resolve(JSON.stringify(teams));
+						console.log("  resolve func2 rows:" + nRows);
+						console.log("  resolve func2:" + teams);
+						resolve(teams);
+                    }
+                }
+            );
+			});
+		});	
+	
+}
+
+/*
+
 module.exports = {
 
 	getConnection : function (filename) {
 		console.log("  Entering getConnection");
-		var express = require('express');
+		//var express = require('express');
 		var sqlite3 = require('sqlite3').verbose();
 		var fs = require('fs');
 		//var filename = 'slack.db';
@@ -69,6 +282,8 @@ module.exports = {
 	}
 
 };
+*/
+
 
 function createLoadDataBase() {
 	console.log("  Entering createLoadDataBase");
@@ -145,8 +360,8 @@ if (!dbexists) {
 };
  
 
-var conn = module.exports.getConnection('slack.db');
-var actual = module.exports.getTeam(conn, 'Boston');    // <------- Edit t
+//var conn = module.exports.getConnection('slack.db');
+//var actual = module.exports.getTeam(conn, 'Boston');    // <------- Edit t
 
 
 

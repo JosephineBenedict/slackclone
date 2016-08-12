@@ -1,0 +1,312 @@
+Table Team:
+   ID
+   Name
+
+Table Users:
+   ID
+   Name
+   password
+   email
+
+Table TeamUsers:
+   ID
+   UserID FK
+   TeamID FK
+
+Table Channels:
+   ID
+   Name
+   TeamID FK
+   Description
+   Type // team vs private
+
+Table Messages:
+   ID
+   Content
+   UserID FK  // author
+   ChannelID FK
+   Timestamp
+   
+   
+   
+brian.will [3:00 PM]  
+http://www.restapitutorial.com/httpstatuscodes.html
+restapitutorial.com
+HTTP Status Codes
+HTTP status codes and how to use them in RESTful API or Web Services. 
+
+brian.will [3:08 PM]  
+https://www.npmjs.com/package/sqlite3-transactions
+ npm
+sqlite3-transactions
+Adds transactions support to node-sqlite3. 
+
+
+ 
+ 
+
+brian.will [3:20 PM]  
+```var asserts = require('assert');
+var db = require('../db.js');
+
+var sqlite3 = require('sqlite3');
+var TransactionDatabase = require("sqlite3-transactions").TransactionDatabase;
+
+// create test.db if it doesn't exist
+
+describe('Db module', () => {
+    var conn = new TransactionDatabase(
+        new sqlite3.Database("test.db", 
+            sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE
+        )
+    );
+    after(() => {
+        conn.close();
+    });
+    
+    // configure conn
+
+    it('given team name, return all channel names of that team', () => {
+        conn.beginTransaction(function(err, conn) {
+            try {
+                var teamName = 'Yankees';
+                var expected = ['Orange', 'Blue', 'Red'];
+                var actual = db.getChannels(tconn, teamName);
+                assert(actual, expected);
+            } finally {
+                conn.rollback();
+            }
+        });
+    });
+});
+```
+
+new messages
+
+----- Today August 12th, 2016 -----
+
+
+
+brian.will [8:45 AM]  
+https://github.com/domenic/chai-as-promised
+ GitHub
+domenic/chai-as-promised
+chai-as-promised - Extends Chai with assertions about promises. 
+ 
+ 
+
+brian.will [8:59 AM]  
+```{
+    "version": "0.1.0",
+    // List of configurations. Add new configurations or edit existing ones.  
+    // ONLY "node" and "mono" are supported, change "type" to switch.
+    "configurations": [
+        {
+            // Name of configuration; appears in the launch configuration drop down menu.
+            "name": "Run app.js",
+            // Type of configuration. Possible values: "node", "mono".
+            "type": "node",
+            // Workspace relative or absolute path to the program.
+            "program": "app.js",
+            // Automatically stop program after launch.
+            "stopOnEntry": false,
+            // Command line arguments passed to the program.
+            "args": [],
+            // Workspace relative or absolute path to the working directory of the program being debugged. Default is the current workspace.
+            "cwd": ".",
+            // Workspace relative or absolute path to the runtime executable to be used. Default is the runtime executable on the PATH.
+            "runtimeExecutable": null,
+            // Environment variables passed to the program.
+            "env": { "NODE_ENV": "production"}
+        },
+        {
+            // Name of configuration; appears in the launch configuration drop down menu.
+            "name": "Run mocha",
+            // Type of configuration. Possible values: "node", "mono".
+            "type": "node",
+            // Workspace relative or absolute path to the program.
+            "program": "/Users/gp/Projects/evol_dealermgmt/node_modules/mocha/bin/_mocha",
+            // Automatically stop program after launch.
+            "stopOnEntry": false,
+            // Command line arguments passed to the program.
+            "args": ["test/unit.js"],
+            // Workspace relative or absolute path to the working directory of the program being debugged. Default is the current workspace.
+            "cwd": ".",
+            // Workspace relative or absolute path to the runtime executable to be used. Default is the runtime executable on the PATH.
+            "runtimeExecutable": null,
+            // Environment variables passed to the program.
+            "env": { "NODE_ENV": "production"}
+        }
+    ]
+}
+```
+
+brian.will [10:52 AM]  
+```describe('User', function() {
+  describe('#save()', function() {
+    it('should save without error', function(done) {
+      var user = new User('Luna');
+      user.save(function(err) {
+        if (err) throw err;
+        done();
+      });
+    });
+  });
+});
+
+```
+
+[10:54]  
+ ```
+describe('#find()', function() {
+  it('respond with matching records', function() {
+    return db.find({ type: 'User' }).should.eventually.have.length(3);
+  });
+});
+```
+
+[10:56]  
+ ```npm install chai chai-as-promised —save
+```
+
+[11:00]  
+ ```var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+
+chai.use(chaiAsPromised);
+
+// Then either:
+var expect = chai.expect;
+// or:
+var assert = chai.assert;
+// or:
+chai.should();
+// according to your preference of assertion style
+```
+
+[11:00]  
+https://github.com/domenic/chai-as-promised
+ GitHub
+domenic/chai-as-promised
+chai-as-promised - Extends Chai with assertions about promises. 
+ 
+ 
+
+paulgfrey [12:48 PM]  
+```
+
+[12:48]  
+// TestUserHandler - test all the user functions
+var sqlite3 = require('sqlite3');
+var expect = require('expect.js');
+var assert = require('assert');
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+
+chai.use(chaiAsPromised);
+chai.should();
+
+var userHandler = require("../userhandler.js");
+var db = new sqlite3.Database('testslackclone.db');
+
+describe('Test userHandler', () => {
+   beforeEach(() => {
+       db.exec('BEGIN');
+   });
+   afterEach(() => {
+       db.exec('ROLLBACK');
+   });
+   it('#1 getUserProfileJSON', (done) => {
+       var userId = 1;
+       var user = { id: userId, name: "shuvo", password: "QWEWRER", email: "BLASHS@GMAIL.COM" };
+       var expected = JSON.stringify(user);
+       userHandler.getUserProfileJSON(db, userId).should.eventually.equal(expected).notify(done);
+   });
+
+   it('#2 createUserProfile', (done) => {
+       var user = { name: "Paul Frey", password: "superman", email: "paulgfrey@gmail.com" };
+       var expected = JSON.stringify(user);
+       userHandler.createUserProfile(db, user.name, user.password, user.email)
+           .then(
+           () => {
+               return getUserFromDb(user.id);
+           })
+           .should.eventually.equal(expected).notify(done);
+   });
+});
+
+function getUserFromDb(userId) {
+   return new Promise((resolve, reject) => {
+       var query = "SELECT * FROM USERS "
+           + "  WHERE ID = '" + userId + "'";
+       var user;
+       db.each(query,
+           function (err, row) {
+               if (err) {
+                   throw err;
+               }
+               user = { id: ID, name: row.NAME, password: row.PASSWORD, email: row.EMAIL };
+           },
+           function (err) {
+               if (err) {
+                   reject(err);
+               }
+               else {
+                   resolve(JSON.stringify(user));
+               }
+           });
+   });
+}
+
+
+
+
+brian.will [2:11 PM]  
+https://www.digitalocean.com/community/tutorials/the-docker-ecosystem-an-introduction-to-common-components
+ DigitalOcean
+The Docker Ecosystem: An Introduction to Common Components | DigitalOcean
+In the past few years, there has been a resurgence of interest in containerization and its related technologies. Specifically, many organizations are now designing their applications and services to rely on distributed systems that can easily scale an (286KB)
+
+
+[2:12]  
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
+ DigitalOcean
+How To Install and Use Docker on Ubuntu 16.04 | DigitalOcean
+There are two methods for installing Docker on Ubuntu 16.04. One method involves installing it on an existing installation of the operating system. The other involves spinning up a server with a tool called Docker Machine that auto-installs Docker on (71KB)
+
+
+brian.will [2:30 PM]  
+each microservice could be a web server, a data source, or a combination of the two: no hard distinction
+in other words, each can have own persistence layer
+
+microservices pros vs monolith SOA
+   'hey, we want this new feature, let's add it to existing codebase vs. let's add a new, separate service'
+
+   pro: more flexible deployment / scaling
+   pro: get away from heavy-weight dependencies, overly-prescriptive frameworks
+   pro: cuts down friction in large organizations
+   pro: get away from single-language, -platform dependence
+   pro: embrace component failure / redundency
+
+   con: more network overhead
+   con: consistency / coherence problems
+   con: if you get too fine-grained, the services often get too abstract
+   con: adds unnecessary indirection / fracturing for small teams    
+   con: end up with large system composed out of excessive number of languages/platforms
+   con: constructing out of smaller pieces may require more glue
+   con: embrace component failure / redundency: tolerating/hiding bugs that should be fixed
+   con: how do I debug across separate services?
+   con: https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing
+
+new messages
+brian.will [3:10 PM]  
+edit your bios:
+on system start, hit esc repeatedly until you see a screen, then hit f10
+Device configurations —> scroll down and enable VxT and the option after that
+then save and exit to reboot
+
+[3:11]  
+then download and install DockerToolbox
+
+beiying [3:13 PM]  
+Enable "VTx" and "VTd" under device configuration

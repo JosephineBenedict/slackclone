@@ -2,30 +2,73 @@ var express = require('express');
 //var sql = require('./loadDB');
 var app = express();
 
+module.exports = {
 
+	getConnection : function (filename) {
+		console.log("  Entering getConnection");
+		var express = require('express');
+		var sqlite3 = require('sqlite3').verbose();
+		var fs = require('fs');
+		//var filename = 'slack.db';
+		var dbexists = false;
+		try {
+			console.log("  before accessSync");
+			fs.accessSync(filename);
+			console.log("  accessSync true");
+			dbexists = true;
+		
+		} catch (ex) {
+			dbexists = false;
+			console.log("  accessSync false");
+		}
+		var db = new sqlite3.Database('slack.db');	
+		
+		console.log("  connection: " + db);
+		
+		return db;
 
-function getConnection() {
-	console.log("  Entering getConnection");
-	var express = require('express');
-	var sqlite3 = require('sqlite3').verbose();
-	var fs = require('fs');
-	var filename = 'slack.db';
-	var dbexists = false;
-	try {
-		console.log("  before accessSync");
-		fs.accessSync(filename);
-		console.log("  accessSync true");
-		dbexists = true;
+	},
 	
-	} catch (ex) {
-		dbexists = false;
-		console.log("  accessSync false");
+	getTeam : function(db, teamId) {
+		console.log("Entering getTeam");
+		
+		return new Promise((resolve, reject) => {
+
+        var query = "SELECT NAME FROM TEAM "
+             + "  WHERE ID = '" + teamId + "'";
+
+        var teams = [];
+
+        db.serialize(function() {
+			console.log("Entering db.serialize");
+            db.each(
+                query,
+                function(err, row) {
+					console.log("  Entering func1");
+                    if (err) {
+                        reject(err);
+                    } else {  
+						console.log("  push func1");					
+                        teams.push(row.NAME);
+                    }
+                },
+                 function (err, nRows) {
+					console.log("  Entering func2");
+                    if (err) {
+                        reject(err);
+                    } else {
+                        //resolve(JSON.stringify(teams));
+						console.log("  resolve func2 rows:" + nRows);
+						console.log("  resolve func2:" + teams);
+						resolve(teams);
+                    }
+                }
+            );
+			});
+		});
 	}
-	var db = new sqlite3.Database('slack.db');	
 
 };
-
-
 
 function createLoadDataBase() {
 	console.log("  Entering createLoadDataBase");
@@ -34,7 +77,6 @@ var sqlite3 = require('sqlite3').verbose();
 var fs = require('fs');
 var filename = 'slack.db';
 var dbexists = false;
-/*
 try {
 	console.log("  before accessSync");
     fs.accessSync(filename);
@@ -45,8 +87,6 @@ try {
     dbexists = false;
 	console.log("  accessSync false");
 }
-*/
-
 var db = new sqlite3.Database('slack.db');
 if (!dbexists) {
     db.serialize(function() {
@@ -61,7 +101,7 @@ if (!dbexists) {
                     " PASSWORD  CHAR(25)                        NOT NULL,"  + 
                     " EMAIL     CHAR(50)                        NOT NULL)"; 
  
-      var createTeamUserTableSql = "CREATE TABLE IF NOT EXISTS TEAMUSER " +
+      var createTeamUserTableSql = "CREATE TABLE IF NOT EXISTS USER " +
                     "(ID            CHAR(25)        PRIMARY KEY     NOT NULL," +
                     " USERID        CHAR(25)                        NOT NULL," + 
                     " TEAMID        CHAR(25)                        NOT NULL)"; 
@@ -78,66 +118,25 @@ if (!dbexists) {
                     "(ID          CHAR(25)        PRIMARY KEY     NOT NULL," +
 				    " CONTENT     TEXT                            NOT NULL," +				
 					" USERID      CHAR(25)                        NOT NULL," +
-				    " CHANNELID   CHAR(25)                        NOT NULL,"  + 	
+				    " CHANNELID   CHAR(25)                        NOT NULL"  + 	
    					" TIMESTAMP   CHAR(25)                        NOT NULL)"; 	
 							
-		console.log("  Creating Team Table");						
+						
         db.run(createTeamTableSql);
-		
-		console.log("  Creating User Table");	
 		db.run(createUserTableSql);
-		
-		console.log("  Creating TeamUser Table");			
         db.run(createTeamUserTableSql);
-
-		console.log("  Creating Channel Table");			
+      
 		db.run(createChannelTableSql);
-		
-		console.log("  Creating Message Table");	
      	db.run(createMessageTableSql);
 		
-		/*
-		var insertTeamSql = "INSERT INTO TEAM (ID, NAME) " +
-            "VALUES ('Boston',        'Red Sox');
-        */       
-		
-		/*
-		var insertTeamSql = "INSERT INTO TEAM " +
-			"(ID, NAME) " +
-			"VALUES " + 
-			"('Boston', 'Red Sox')";
-			*/
-			
-			
-		
-		var insertTeamSql = "INSERT INTO TEAM (ID, NAME) " +
-            "VALUES ('Boston',        'Red Sox')," +
-                   "('New York',      'Giants')," +
-                   "('Baltimore',     'Colts')," +
+		var insertTeamSql = "INSERT INTO TEAM (TEAM_ID, TEAM_NAME) " +
+            "VALUES ('Boston',        'Red Sox'),     " +
+                   "('New York',      'Giants'),      " +
+                   "('Baltimore',     'Colts'),       " +
                    "('San Francisco', 'Forty-Niners')," +
-                   "('New Delhi',     'Crickets')"; 
-		
-		
-		/*		   
-		String insertFollowerSql = "INSERT INTO FOLLOWER (USERID, FOLLOWERID) " +
-	   				                   "VALUES ('shuvo', 'abu')," +
-	   				                   		  "('abu', 'swarup')," +
-	   				                          "('abu', 'charles')," +
-	   				                   		  "('beiying', 'shuvo');";
-		*/
-		
-		
-		
-		console.log("  Getting DB connection");
-		var conn = new sqlite3.Database('slack.db');
-
-		//console.log("  Creating statement");	
-		//Statement stmt = conn.createStatement();
-		
-		console.log("  Inserting Team Rows");
-		//stmt.executeUpdate(insertTeamSql);
-		
-		conn.run(insertTeamSql);
+                   "('New Delhi',     'Crickets');"; 
+				   
+		db.run(insertTeamSql);
 		
          
         });
@@ -146,10 +145,10 @@ if (!dbexists) {
 };
  
 
+var conn = module.exports.getConnection('slack.db');
+var actual = module.exports.getTeam(conn, 'Boston');    // <------- Edit t
 
 
 
 
-
-createLoadDataBase();
 
