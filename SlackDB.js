@@ -88,14 +88,6 @@ function getTeam(db, teamId) {
 				});
 				//console.log( myArr[index] );
 			}	
-			
-			
-			
-			
-			
-			
-			
-			
 		});	
 	
 }
@@ -213,6 +205,282 @@ function insertTeam(db, team) {
 	
 }
 
+
+
+exports.getUser=getUser;
+function getUser(db, userId) {
+		console.log("Entering getUser");
+		
+		return new Promise((resolve, reject) => {
+
+        var query = "SELECT NAME, PASSWORD, EMAIL FROM USER "
+             + "  WHERE ID = '" + userId + "'";
+
+        var users = [];
+
+        db.serialize(function() {
+			console.log("Entering db.serialize");
+            db.each(
+                query,
+                function(err, row) {
+					console.log("  Entering func1");
+                    if (err) {
+                        reject(err);
+                    } else {  
+						console.log("  push func1");
+						var user = {};
+						user.id  = userId;
+						user.name = row.NAME;
+						user.password = row.PASSWORD;
+						user.email = row.EMAIL;
+                        users.push(email);						
+                     }
+                },
+                 function (err, nRows) {
+					console.log("  Entering func2");
+                    if (err) {
+                        reject(err);
+                    } else {
+                        //resolve(JSON.stringify(teams));
+						console.log("  resolve func2 rows:" + nRows);
+						console.log("  resolve func2:" + users);
+						resolve(users);
+                    }
+                }
+            );
+			});
+		});	
+}
+
+
+exports.getAllUsers=getAllUsers;
+function getAllUsers(db) {
+		console.log("Entering getAllUsers");
+		
+		return new Promise((resolve, reject) => {
+
+        var query = "SELECT ID, NAME, PASSWORD, EMAIL FROM USER ";
+           
+        var users = [];
+
+        db.serialize(function() {
+			console.log("Entering db.serialize");
+            db.each(
+                query,
+                function(err, row) {
+					console.log("  Entering func1");
+                    if (err) {
+                        reject(err);
+                    } else {  
+						console.log("  push func1");
+						var user = {};
+						user.id  = row.ID;
+						user.name = row.NAME;
+						user.password = row.PASSWORD;
+						user.email = row.EMAIL;	
+                        users.push(user);
+                    }
+                },
+                 function (err, nRows) {
+					console.log("  Entering func2");
+                    if (err) {
+                        reject(err);
+                    } else {
+                        //resolve(JSON.stringify(teams));
+						console.log("  resolve func2 rows:" + nRows);
+						console.log("  resolve func2:" + users);
+						resolve(users);
+                    }
+                }
+            );
+			});
+		});	
+	
+}
+
+
+exports.getTeamUser=getTeamUser;
+function getUser(db, id) {
+		console.log("Entering getTeamUser");
+		
+		return new Promise((resolve, reject) => {
+
+        var query = "SELECT USERID, TEAMID FROM TEAMUSER "
+             + "  WHERE ID = '" + id + "'";
+
+        var teamUsers = [];
+
+        db.serialize(function() {
+			console.log("Entering db.serialize");
+            db.each(
+                query,
+                function(err, row) {
+					console.log("  Entering func1");
+                    if (err) {
+                        reject(err);
+                    } else {  
+						console.log("  push func1");
+						var teamUser = {};
+						teamUser.id  = id;
+						teamUser.userID = row.USERID;
+						teamUser.teamID = row.TEAMID;
+                        teamUsers.push(teamUser);						
+                    }
+                },
+                 function (err, nRows) {
+					console.log("  Entering func2");
+                    if (err) {
+                        reject(err);
+                    } else {
+                        //resolve(JSON.stringify(teams));
+						console.log("  resolve func2 rows:" + nRows);
+						console.log("  resolve func2:" + teamUsers);
+						resolve(teamUsers);
+                    }
+                }
+            );
+			});
+		});	
+}
+
+
+exports.getAllTeamUsers=getAllTeamUsers;
+function getAllUsers(db) {
+		console.log("Entering getAllTeamUsers");
+		
+		return new Promise((resolve, reject) => {
+
+        var query = "SELECT ID, USERID, TEAMID FROM TEAMUSER ";
+           
+        var teamUsers = [];
+
+        db.serialize(function() {
+			console.log("Entering db.serialize");
+            db.each(
+                query,
+                function(err, row) {
+					console.log("  Entering func1");
+                    if (err) {
+                        reject(err);
+                    } else {  
+						console.log("  push func1");
+						var teamUser = {};
+						teamUser.id  = row.ID;
+						teamUser.userid = row.USERID;
+						teamUser.teamid = row.TEAMID;
+                        teamUsers.push(teamUser);
+                    }
+                },
+                 function (err, nRows) {
+					console.log("  Entering func2");
+                    if (err) {
+                        reject(err);
+                    } else {
+                        //resolve(JSON.stringify(teams));
+						console.log("  resolve func2 rows:" + nRows);
+						console.log("  resolve func2:" + teamUsers);
+						resolve(teamUsers);
+                    }
+                }
+            );
+			});
+		});	
+	
+}
+
+
+exports.getChannel;
+function getChannel(db, id) {
+		console.log("Entering getChannel");
+		
+		return new Promise((resolve, reject) => {
+
+        var query = "SELECT NAME, TEAMID, DESCRIPTION, TYPE FROM CHANNEL "
+             + "  WHERE ID = '" + id + "'";
+
+        var Channels = [];
+
+        db.serialize(function() {
+			console.log("Entering db.serialize");
+            db.each(
+                query,
+                function(err, row) {
+					console.log("  Entering func1");
+                    if (err) {
+                        reject(err);
+                    } else {  
+						console.log("  push func1");
+						var channel = {};
+						channel.id  = id;
+						channel.name = row.NAME;
+						channel.teamID = row.TEAMID;
+						channel.description = row.DESCRIPTION;
+						channel.type = row.TYPE;
+                        channels.push(channel);						
+                    }
+                },
+                 function (err, nRows) {
+					console.log("  Entering func2");
+                    if (err) {
+                        reject(err);
+                    } else {
+                        //resolve(JSON.stringify(teams));
+						console.log("  resolve func2 rows:" + nRows);
+						console.log("  resolve func2:" + channels);
+						resolve(channels);
+                    }
+                }
+            );
+			});
+		});	
+}
+
+
+exports.getAllChannels=getAllChannels;
+function getAllUsers(db) {
+		console.log("Entering getAllChannels");
+		
+		return new Promise((resolve, reject) => {
+
+        var query = "SELECT ID, NAME, TEAMID, DESCRIPTION, TYPE FROM CHANNEL ";
+           
+        var Channels = [];
+
+        db.serialize(function() {
+			console.log("Entering db.serialize");
+            db.each(
+                query,
+                function(err, row) {
+					console.log("  Entering func1");
+                    if (err) {
+                        reject(err);
+                    } else {  
+						console.log("  push func1");
+						var channel = {};
+						channel.id  = row.ID;
+						channel.name = row.NAME;
+						channel.teamid = row.TEAMID;
+						channel.description = row.DESCRIPTION;
+						channel.type = row.TYPE;
+                        teamUsers.push(channel);
+                    }
+                },
+                 function (err, nRows) {
+					console.log("  Entering func2");
+                    if (err) {
+                        reject(err);
+                    } else {
+                        //resolve(JSON.stringify(teams));
+						console.log("  resolve func2 rows:" + nRows);
+						console.log("  resolve func2:" + channels);
+						resolve(channels);
+                    }
+                }
+            );
+			});
+		});	
+	
+}
 /*
 
 module.exports = {
