@@ -545,6 +545,57 @@ function getChannelData(db, userid) {
             );
 			});
 		});	
+		
+		
+		
+		exports.getChannelMessages=getChannelMessages;
+		function getChannelMessages(db, channel_id) {
+		console.log("Entering getChannelMessages");
+		
+		return new Promise((resolve, reject) => {
+
+        var query = "select id"
+				+		  ",USERID as 'MESSAGE_FROM'"
+				+		  ",CONTENT"
+				+		  ",TIMESTAMP"
+				+     "from message"
+		        +    "WHERE channelid = '" + channel_id + "'";
+
+        var messages = [];
+
+        db.serialize(function() {
+			console.log("Entering db.serialize");
+            db.each(
+                query,
+                function(err, row) {
+					console.log("  Entering func1");
+                    if (err) {
+                        reject(err);
+                    } else {  
+						console.log("  push func1");
+						var message = {};
+						message.channel_id = channel_id;
+						message.message_id  = row.ID;
+						message.message_from  = row.MESSAGE_FROM;
+						message.content  = row.CONTENT;
+						message.timestamp_type = row.TIMESTAMP;
+                        messages.push(message);
+                    }
+                },
+                 function (err, nRows) {
+					console.log("  Entering func2");
+                    if (err) {
+                        reject(err);
+                    } else {
+                        //resolve(JSON.stringify(teams));
+						console.log("  resolve func2 rows:" + nRows);
+						console.log("  resolve func2:" + messages);
+						resolve(messages);
+                    }
+                }
+            );
+			});
+		});	
 	
 }
 

@@ -1,0 +1,7 @@
+select ID
+		 ,USERID as 'MESSAGE_FROM'
+         ,CONTENT
+		 ,TIMESTAMP
+  from MESSAGE
+ where channelid = 'ABC';   
+	

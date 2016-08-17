@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/slackclone/slack.db"/><window><current_tab id="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="150"/><column_width id="3" width="2283"/><expanded_item id="0" parent="-1"/><expanded_item id="1" parent="-1"/><expanded_item id="2" parent="-1"/><expanded_item id="3" parent="-1"/></tab_structure><tab_browse><current_table name="MESSAGE"/><default_encoding codec=""/><browsetable_info data="AAAABQAAAAgAVQBTAEUAUgS54qAAAAAAAAAAAAAAAAAAAAAAAP////8AAAAQAFQARQBBAE0AVQBTAEUAUgf4suAAAAAAAAAAAAAAAAAAAAAAAP////8AAAAIAFQARQBBAE0H+LMwAAAAAAAAAAAAAAAAAAAAAAD/////AAAADgBNAEUAUwBTAEEARwBFBLeloAAAAAAAAAAEAAAABQAAAN8AAAAEAAAAlgAAAAIAAAI0AAAAAQAAAFoAAAAAAAAAAAD/////AAAADgBDAEgAQQBOAE4ARQBMBKK5IAAAAAAAAAABAAAABAAAAWMAAAAAAAAAAAD/////"/></tab_browse><tab_sql><sql name="SQL 1">select user.name as 'USER_NAME'
+         ,user.password
+		 ,user.email
+		 ,teamuser.teamid
+		 ,team.name as 'TEAM_NAME'
+		 ,channel.id
+		 ,channel.name as 'CHANNEL_NAME'
+		 ,channel.description
+		 ,channel.type
+  from user, teamuser, channel, team
+ where user.id = 'JB'
+     and user.id = teamuser.userid 
+     and teamuser.teamid = channel.teamid
+	 and teamuser.teamid = team.id;</sql><current_tab id="0"/></tab_sql></sqlb_project>
