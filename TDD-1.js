@@ -166,6 +166,90 @@ describe('Db module', () => {
         console.log("  teamName: " + teamName);
         //asserts(teamName, expected);
     });
+	
+	
+	
+	
+	it('getChannelData', (done) => {
+        console.log("Entering getChannelData");
+        console.log("connection:" + conn);
+        //var teamID = 'Boston';
+        //var expected = ['Orange', 'Blue', 'Red', 'Green'];
+		//var expected = [['Boston', 'Red Sox'], ['Baltimore', 'Colts']];
+		//var expected = [{'Boston': 'Red Sox'}, {'Baltimore': 'Colts'}];
+		var expected = [{'userid': 'JB', 'user_name': 'Josie Benedict', 'password:': 'password', 'email': 'josie@gmail.com', 'team_id': 'Boston', 'team_name': 'Red Sox', 'channel_id': 'ABC', 'channel_name': 'American Broadcasting Corporation', 'channel_desc:': 'TV Station', 'channel_type:': 'Public'}, {'userid': 'JB', 'user_name': 'Josie Benedict', 'password': 'password', 'email': 'josie@gmail.com', 'team_id:': 'Baltimore', 'team_name': 'Colts', 'channel_id': 'CBS', 'channel_name': 'Central Broadcasting Corporation', 'channel_desc': 'TV Station', 'channel_type': 'Public'}];
+        var actual = db.getChannelData(conn, 'JB');    // <------- Edit this line
+        var channelData=[];
+        actual.then(
+        (val) => {
+            //res.send(val);
+            console.log('val: ' + val);
+            teamName = val;
+            console.log("  channelData: " + channelData);
+			//asserts(teamName, expected);
+			
+			/*
+			console.log('Traversing return set');
+			//console.log('  val size: ' + val.size);
+			console.log('  val len : ' + val.length);
+			for (var team in val) {
+				console.log('Processing a team!');
+				team.keys(o).forEach(function(key) {
+					var vam = o[key];
+					console.log("  Key: " + o[key]);
+					console.log("  Vam: " + vam);
+				});
+				//console.log( myArr[index] );
+			}	
+			*/
+			
+			asserts(channelData, expected);
+			
+			
+			
+			done();
+        },
+        (err) => {
+            console.log('oh no! yeah', err);
+        }
+		
+		
+		
+    );
+	
+	//var myArr = [{a:1, b:2}, {c:3, d:4}];
+	console.log('Traversing return set3');
+	for (var team in actual) {
+		console.log('Processing b team!');
+		team.keys(o).forEach(function(key) {
+			var val = o[key];
+			console.log("  Key: " + o[key]);
+			console.log("  Val: " + val);
+		});
+			//console.log( myArr[index] );
+	}
+			/*
+			actual.keys(o).forEach(function(key) {
+				var val = o[key];
+				console.log("  Key: " + o[key]);
+				console.log("  Val: " + val);
+			});
+			*/
+
+        console.log("  expected: " + expected);
+        console.log("  actual  : " + actual);
+        console.log("  teamName: " + teamName);
+        //asserts(teamName, expected);
+    });
+	
+	
+	
+	
+	
+	
+	
+	
+	
 });
 
 

@@ -300,7 +300,7 @@ function getAllUsers(db) {
 
 
 exports.getTeamUser=getTeamUser;
-function getUser(db, id) {
+function getTeamUser(db, id) {
 		console.log("Entering getTeamUser");
 		
 		return new Promise((resolve, reject) => {
@@ -345,7 +345,7 @@ function getUser(db, id) {
 
 
 exports.getAllTeamUsers=getAllTeamUsers;
-function getAllUsers(db) {
+function getAllTeamUsers(db) {
 		console.log("Entering getAllTeamUsers");
 		
 		return new Promise((resolve, reject) => {
@@ -437,7 +437,7 @@ function getChannel(db, id) {
 
 
 exports.getAllChannels=getAllChannels;
-function getAllUsers(db) {
+function getAllChannels(db) {
 		console.log("Entering getAllChannels");
 		
 		return new Promise((resolve, reject) => {
@@ -481,6 +481,76 @@ function getAllUsers(db) {
 		});	
 	
 }
+
+
+
+exports.getChannelData=getChannelData;
+function getChannelData(db, userid) {
+		console.log("Entering getChannelData");
+		
+		return new Promise((resolve, reject) => {
+
+        var query = "select user.name as 'USER_NAME'"
+				+		  ",user.password"
+				+		  ",user.email"
+				+		  ",teamuser.teamid"
+				+		  ",team.name as 'TEAM_NAME'"
+				+		  ",channel.id"
+				+		  ",channel.name as 'CHANNEL_NAME'"
+				+		  ",channel.description"
+				+		  ",channel.type"
+				+     "from user, teamuser, channel, team"
+		        +    "WHERE ID = '" + userid + "'";
+				+	   "and user.id = teamuser.userid" 
+				+	   "and teamuser.teamid = channel.teamid"
+				+	   "and teamuser.teamid = team.id";
+	           
+        var Channels = [];
+
+        db.serialize(function() {
+			console.log("Entering db.serialize");
+            db.each(
+                query,
+                function(err, row) {
+					console.log("  Entering func1");
+                    if (err) {
+                        reject(err);
+                    } else {  
+						console.log("  push func1");
+						var channel = {};
+						channel.userid  = userid;
+						channel.user_name  = row.USER_NAME;
+						channel.user_password  = row.PASSWORD;
+						channel.user_email = row.EMAIL;
+						channel.team_id = row.TEAMID;
+						channel.team_name = row.TEAM_NAME;
+						channel.channel_id = row.ID;
+						channel.channel_name = row.CHANNEL_NAME;
+						channel.channel_desc = row.DESCRIPTION;
+						channel.channel_type = row.TYPE;
+                        teamUsers.push(channel);
+                    }
+                },
+                 function (err, nRows) {
+					console.log("  Entering func2");
+                    if (err) {
+                        reject(err);
+                    } else {
+                        //resolve(JSON.stringify(teams));
+						console.log("  resolve func2 rows:" + nRows);
+						console.log("  resolve func2:" + channels);
+						resolve(channels);
+                    }
+                }
+            );
+			});
+		});	
+	
+}
+
+
+
+
 /*
 
 module.exports = {
